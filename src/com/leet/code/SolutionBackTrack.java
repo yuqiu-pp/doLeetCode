@@ -1,12 +1,12 @@
 package com.leet.code;
 
+import org.omg.PortableInterceptor.INACTIVE;
 import sun.font.FileFontStrike;
 
+import javax.sound.midi.Soundbank;
 import java.lang.annotation.ElementType;
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class SolutionBackTrack {
 
@@ -307,6 +307,66 @@ public class SolutionBackTrack {
 
 
 
+    // LeetCode 322
+
+    int minNum = Integer.MAX_VALUE;
+
+    // 回溯  超时
+    public int coinChange(int[] coins, int amount) {
+        int len = coins.length;
+        int num = 0;
+
+        Arrays.sort(coins);
+        for (int i = 0; i < coins.length/2; i++) {
+            int tmp = coins[i];
+            coins[i] = coins[coins.length-1-i];
+            coins[coins.length-1-i] = tmp;
+        }
+
+        coinBackTrack(coins, amount, num);
+
+        if (minNum != Integer.MAX_VALUE){
+            return minNum;
+        }
+        return -1;
+    }
+
+    public void coinBackTrack(int[] coins, int amount, int count){
+        if (count >= minNum){
+            return;
+        }
+
+        if (amount == 0){
+            if (count < minNum){
+                minNum = count;
+            }
+            System.out.println(" ok =" + count);
+            return;
+        }
+
+        if (amount < coins[coins.length-1]){
+            return;
+        }
+
+        for (int i = 0; i < coins.length; i++) {
+
+            if (amount >= coins[i]){
+                // System.out.print(coins[i] + ",");
+                // 直接传count+1，amount也一样
+                // 这样递归还来amount还是原来的值
+                coinBackTrack(coins, amount-coins[i], count+1);
+            }
+
+            if (count >= minNum){
+                return;
+            }
+        }
+    }
+
+
+
+    // public int minVal()
+
 
     public static void main(String[] args) {
         SolutionBackTrack solution = new SolutionBackTrack();
@@ -319,11 +379,17 @@ public class SolutionBackTrack {
 
         // solution.cal8queens(0);
 
-        solution.addWord("bad");
-        solution.addWord("dad");
-        solution.addWord("mad");
-        System.out.println(solution.search("pad"));
-        System.out.println(solution.search("b.."));
+        // solution.addWord("bad");
+        // solution.addWord("dad");
+        // solution.addWord("mad");
+        // System.out.println(solution.search("pad"));
+        // System.out.println(solution.search("b.."));
+
+        // int[] coins = {186,419,83,408};
+        // int amount = 6249;
+        int[] coins = {474,83,404,3};
+        int amount = 264;
+        System.out.println(solution.coinChange(coins, amount));
 
     }
 }

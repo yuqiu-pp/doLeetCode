@@ -263,7 +263,7 @@ public class SolutionDynamicPlan {
         内存消耗 : 70.7 MB, 在Best Time to Buy and Sell Stock with Transaction Fee的Java提交中击败了30.91% 的用户
 
      */
-    public int maxProfit(int[] prices, int fee) {
+    public int maxProfit714(int[] prices, int fee) {
         if (prices.length <= 1){
             return 0;
         }
@@ -286,6 +286,135 @@ public class SolutionDynamicPlan {
     }
 
 
+    // LeetCode 322
+
+    /**
+     *  执行用时 : 38 ms, 在Coin Change的Java提交中击败了41.24% 的用户
+        内存消耗 : 37.2 MB, 在Coin Change的Java提交中击败了78.66% 的用户
+     */
+    // 动态规划
+    public int coinChange(int[] coins, int amount) {
+        int len = coins.length;
+
+        if (amount == 0){
+            return 0;
+        }
+        if (len == 0){
+            return -1;
+        }
+
+        // 结果集
+        int[] count = new int[amount+1];
+        Arrays.fill(count, Integer.MAX_VALUE);
+        for (int i = 1; i <= amount; i++) {
+            // 递推公式
+            // f(n) = 1+ min(f(n-coins[0]), f(n-coins[1]), f(n-coins[2], ...))
+            // 用循环来实现min(...)
+            for (int j = 0; j < len; j++) {
+                if (i < coins[j]){
+                    continue;
+                }
+
+                if (i == coins[j]){
+                    count[i] = 0;
+                }else {
+                    count[i] = Math.min(count[i], count[i-coins[j]]);
+                }
+            }
+
+            // 选出最小值后，加1
+            if (count[i] != Integer.MAX_VALUE){
+                count[i] += 1;
+                System.out.println(count[i]);
+            }
+
+        }
+
+        if (count[amount] == Integer.MAX_VALUE){
+            return -1;
+        }
+        return count[amount];
+    }
+
+
+
+    // LeetCode 188
+
+    public int maxProfit188(int k, int[] prices) {
+        if (k == 0){
+            return 0;
+        }
+        int len = prices.length;
+        if (len < 2){
+            return 0;
+        }
+        if (len == 2){
+            if (prices[1] > prices[0]){
+                return prices[1] - prices[0];
+            }
+            return 0;
+        }
+
+        int rst = 0;
+        if (len/3 > k){
+            int[] buy = new int[len];
+            int[] sell = new int[len];
+            // 第k次卖出
+            int kk = 0;
+            int[] max = new int[len/2+1];
+
+            buy[0] = 0 - prices[0];
+            sell[0] = 0;
+
+
+            for (int i = 1; i < len; i++) {
+                if (i == 1){
+                    buy[i] = Math.max(sell[0]-prices[i], buy[i-1]);
+                }else {
+                    buy[i] = Math.max(sell[i-1]-prices[i], buy[i-1]);
+                }
+
+                sell[i] = Math.max(prices[i]+buy[i-1], sell[i-1]);
+
+                // 第k次卖出后 最大利润集合
+                if (i%3 == 2){
+                    max[i/3] = Math.max(sell[i], sell[i-1]);
+                    // 最后一天，如果利润大于0，直接卖掉
+                    rst = Math.max(sell[i], sell[i-1]);
+                }else {
+                    // 最后一天，如果利润大于0，直接卖掉
+                    if (i == len - 1 && sell[i] > 0) {
+                        rst = sell[i];
+                    }
+                }
+            }
+        }else {
+            // 取k个峰谷最大差相加
+            int[] max = new int[len+1];
+            int j = 0;
+            int minPirice = prices[0];
+
+            for (int i = 1; i < len; i++) {
+                if (prices[i] < prices[i-1]){
+                    max[j++] = prices[i-1] - minPirice;
+                    minPirice = prices[i];
+                }else{
+                    if (i == len-1){
+                        max[j++] = prices[i] - minPirice;
+                    }
+                }
+            }
+
+            Arrays.sort(max);
+            for (int i = 0; i < k; i++) {
+                rst += max[len-i];
+            }
+        }
+
+
+        return rst;
+    }
+
 
 
     public static void main(String[] args) {
@@ -306,8 +435,13 @@ public class SolutionDynamicPlan {
 
         // System.out.println(solution.maxProfit(new int[]{1, 2, 3, 0, 2}));
 
-        System.out.println(solution.maxProfit(new int[]{1,3,2,8,4,9}, 2));
+        // System.out.println(solution.maxProfit(new int[]{1,3,2,8,4,9}, 2));
 
+        System.out.println(solution.maxProfit188(2, new int[]{3,3,5,0,0,3,1,4}));
+
+        int[] coins = {474,83,404,3};
+        int amount = 264;
+        System.out.println(solution.coinChange(coins, amount));
     }
 
 }
