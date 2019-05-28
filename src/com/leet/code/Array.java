@@ -1,5 +1,8 @@
 package com.leet.code;
 
+import java.util.HashMap;
+import java.util.Stack;
+
 public class Array {
 
 }
@@ -178,6 +181,38 @@ class SolutionArray {
         }
         return A;
     }
+
+
+    public int[] twoSum(int[] nums, int target) {
+        Stack<Integer> stack = new Stack<>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int len = nums.length;
+
+        for (int i = 0; i < len; i++) {
+            // 差属于数组
+            int sub = target - nums[i];
+            if (map.containsKey(sub)){
+                int index = map.get(sub);
+                stack.push(Math.max(index, i));
+                stack.push(Math.min(index, i));
+            }else{
+                map.put(nums[i], i);
+            }
+        }
+
+        len = stack.size();
+        if (len == 0){
+            return null;
+        }
+
+        int[] rst = new int[len];
+        for (int i = 0; i < len; i++) {
+            rst[i] = stack.pop();
+        }
+
+        return rst;
+    }
+
 
     public static void main(String[] args) {
         int[] A = {1, 2, 1};

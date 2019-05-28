@@ -344,6 +344,8 @@ public class SolutionTree {
 
 
 
+
+
     public static void main(String[] args) {
         SolutionTree solution = new SolutionTree();
 
@@ -399,12 +401,13 @@ public class SolutionTree {
         // int n = 808;
         // int[][] edges = {{0, 1}, {0, 2}};
         // int n = 3;
-        int[][] edges = {{0, 1}, {0, 2}, {0, 3}, {3, 4}, {4, 5}};
-        int n = 6;
-        List<Integer> list = solution.findMinHeightTrees1(n, edges);
-        for (int i : list){
-            System.out.println(i);
-        }
+        // int[][] edges = {{0, 1}, {0, 2}, {0, 3}, {3, 4}, {4, 5}};
+        // int n = 6;
+        // List<Integer> list = solution.findMinHeightTrees1(n, edges);
+        // for (int i : list){
+        //     System.out.println(i);
+        // }
+
 
     }
 

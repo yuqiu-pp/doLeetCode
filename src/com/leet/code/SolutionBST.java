@@ -4,7 +4,7 @@ package com.leet.code;
 import com.sun.org.apache.xerces.internal.impl.dv.dtd.NMTOKENDatatypeValidator;
 
 import java.math.BigDecimal;
-import java.util.Stack;
+import java.util.*;
 
 // 二叉搜索树
 // 左节点小于父节点，右节点大于父节点
@@ -205,6 +205,42 @@ public class SolutionBST {
     }
 
 
+    // leetCode 653
+
+    // bsf遍历
+    // 优先级队列 存储每层节点
+    public boolean findTarget(TreeNode root, int k) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        if(root == null){
+            return false;
+        }
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        // bsf遍历
+        while (queue.peek() != null){
+            TreeNode node = queue.poll();
+            int sub = k - node.val;
+            if (map.containsKey(sub)){
+                return true;
+            }else{
+                map.put(node.val, 1);
+            }
+            // 下一层加入队列
+            if (node.left != null){
+                queue.add(node.left);
+            }
+            if (node.right != null){
+                queue.add(node.right);
+            }
+        }
+
+        return false;
+    }
+
+
+
     public static void main(String[] args) {
         SolutionBST solution = new SolutionBST();
 
@@ -221,7 +257,8 @@ public class SolutionBST {
 
         Integer[] C = {4,2,6,1,3,null,null};
         TreeNode root = solution.createBSTByArray(C, 0);
-        System.out.println(solution.minDiffInBST(root));
+        // System.out.println(solution.minDiffInBST(root));
 
+        System.out.println(solution.findTarget(root, 6));
     }
 }
