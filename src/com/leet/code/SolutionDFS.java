@@ -248,6 +248,28 @@ public class SolutionDFS {
     }
 
 
+    // leetCode 653
+    // dfs遍历
+    HashMap<Integer, Integer> map = new HashMap<>();
+
+    public boolean findTarget(TreeNode root, int k) {
+        if (root == null) {
+            return false;
+        }
+
+        int sub = k - root.val;
+        if (map.containsKey(sub)) {
+            return true;
+        } else {
+            map.put(root.val, 1);
+        }
+
+        return findTarget(root.left, k) || findTarget(root.right, k);
+    }
+
+
+
+
     public static void main(String[] args) {
         SolutionDFS solution = new SolutionDFS();
 
