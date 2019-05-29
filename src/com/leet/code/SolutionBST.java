@@ -240,6 +240,76 @@ public class SolutionBST {
     }
 
 
+    // leetCode 863
+
+    // 1. target作为跟节点时，统计距离为k的子节点
+    // 2. 删除掉targ的子节点，统计与target所在层相加=k的节点
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        if (root == null || target == null){
+            return null;
+        }
+
+        List<Integer> rst = new LinkedList<>();
+
+        // bfs遍历，查找target
+        int high = 0;
+        int flag = 0;
+        List<TreeNode> curr = new LinkedList<>();
+        List<TreeNode> next = new LinkedList<>();
+        curr.add(root);
+        while (curr.size() > 0){
+            high ++;
+            for (int i = 0; i < curr.size(); i++) {
+                TreeNode node = curr.get(i);
+                if (node.val == target.val) {
+                    // 统计距离为k的子节点
+                    getChildNode(target, K, rst);
+                    // 删除target的子节点
+                    target.right = target.left = null;
+                    flag = 1;
+                    break;
+                }
+                if (node.right != null) {
+                    next.add(node.right);
+                }
+                if (node.left != null) {
+                    next.add(node.left);
+                }
+            }
+            curr.clear();
+            curr = next;
+        }
+
+        // 统计与target所在层相加=k的节点
+        if (flag == 0){
+            return null;
+        }
+
+        int sub = K - high;
+        if (sub < 0){
+            // high - K 层的节点
+        }else{
+            // K - high 层的节点
+        }
+
+        return rst;
+    }
+
+    public void getChildNode(TreeNode root, int k, List<Integer> list){
+        if (root == null || k < 0){
+            return;
+        }
+
+        if (k == 0){
+            list.add(root.val);
+            return;
+        }
+
+        getChildNode(root.left, k-1, list);
+        getChildNode(root.right, k-1, list);
+    }
+
+
 
     public static void main(String[] args) {
         SolutionBST solution = new SolutionBST();
