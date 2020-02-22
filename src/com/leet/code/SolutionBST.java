@@ -3,6 +3,7 @@ package com.leet.code;
 
 import com.sun.org.apache.xerces.internal.impl.dv.dtd.NMTOKENDatatypeValidator;
 
+import javax.swing.text.MaskFormatter;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -244,52 +245,66 @@ public class SolutionBST {
 
     // 1. target作为跟节点时，统计距离为k的子节点
     // 2. 删除掉targ的子节点，统计与target所在层相加=k的节点
-    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+    boolean flag = true;
+
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K)
+    {
+        List<Integer> rst = new ArrayList<>();
+
         if (root == null || target == null){
-            return null;
+            return rst;
         }
 
-        List<Integer> rst = new LinkedList<>();
+        if(K == 0){
+            rst.add(target.val);
+            return rst;
+        }
 
-        // bfs遍历，查找target
-        int high = 0;
-        int flag = 0;
-        List<TreeNode> curr = new LinkedList<>();
-        List<TreeNode> next = new LinkedList<>();
+        // 1.统计距离为k的子节点
+        getChildNode(target, K, rst);
+        // 删除target的子节点
+        target.right = target.left = null;
+
+
+
+        // 统计与target所在层相加=k的节点
+        // <层，节点值>
+        List<TreeNode> curr = new ArrayList<>();
+
         curr.add(root);
         while (curr.size() > 0){
-            high ++;
+            List<TreeNode> next = new ArrayList<>();
             for (int i = 0; i < curr.size(); i++) {
                 TreeNode node = curr.get(i);
-                if (node.val == target.val) {
-                    // 统计距离为k的子节点
-                    getChildNode(target, K, rst);
-                    // 删除target的子节点
-                    target.right = target.left = null;
-                    flag = 1;
-                    break;
-                }
-                if (node.right != null) {
-                    next.add(node.right);
-                }
-                if (node.left != null) {
+                // 2. 父节点或父节点子树节点距离为k的子节点
+                // 确定target在left，还是right
+                boolean bn = parentDfs(node.left, K-1, target.val);
+                if (bn){
+                    rst.add(node.val);
+                    // 右子树中k-1距离的节点OK
+                    getChildNode(node.right, K-1, rst);
                     next.add(node.left);
+                }else {
+                    bn = parentDfs(node.right, K-1, target.val);
+                    if (bn){
+                        rst.add(node.val);
+                        getChildNode(node.left, K-1, rst);
+                        next.add(node.right);
+                    }
+                }
+
+                if (!bn){
+                    if (node.right != null) {
+                        next.add(node.right);
+                    }
+                    if (node.left != null) {
+                        next.add(node.left);
+                    }
                 }
             }
             curr.clear();
             curr = next;
-        }
-
-        // 统计与target所在层相加=k的节点
-        if (flag == 0){
-            return null;
-        }
-
-        int sub = K - high;
-        if (sub < 0){
-            // high - K 层的节点
-        }else{
-            // K - high 层的节点
+            K--;
         }
 
         return rst;
@@ -299,14 +314,34 @@ public class SolutionBST {
         if (root == null || k < 0){
             return;
         }
-
         if (k == 0){
             list.add(root.val);
             return;
         }
-
         getChildNode(root.left, k-1, list);
         getChildNode(root.right, k-1, list);
+    }
+
+    public boolean targetDfs(TreeNode node, int k, int val){
+        if (node == null || k < 0){
+            return false;
+        }
+        if (node.val == val && k == 0){
+            return true;
+        }
+
+        return parentDfs(node.left, k-1, val) || parentDfs(node.right, k-1, val);
+    }
+
+    public boolean parentDfs(TreeNode node, int k, int val){
+        if (node == null || k < 0){
+            return false;
+        }
+        if (node.val == val && k == 0){
+            return true;
+        }
+
+        return parentDfs(node.left, k-1, val) || parentDfs(node.right, k-1, val);
     }
 
 
@@ -325,10 +360,21 @@ public class SolutionBST {
         // System.out.println(solution.containsNearbyAlmostDuplicate1(A, 1, 2147483647));
 
 
-        Integer[] C = {4,2,6,1,3,null,null};
-        TreeNode root = solution.createBSTByArray(C, 0);
+        // Integer[] C = {4,2,6,1,3,null,null};
+        // TreeNode root = solution.createBSTByArray(C, 0);
         // System.out.println(solution.minDiffInBST(root));
 
-        System.out.println(solution.findTarget(root, 6));
+        // System.out.println(solution.findTarget(root, 6));
+
+        // 863
+        Integer[] C = {0,null,1,null,null,2,5,null,null,null,null,null,3,null,5};
+        TreeNode tmp = new TreeNode(4);
+        TreeNode root = solution.createBSTByArray(C, 0);
+        TreeNode node = root.right.left;
+        root.right.left.right.right = tmp;
+        List<Integer> list = solution.distanceK(root, node, 2);
+        for (Integer i : list) {
+            System.out.println(i);
+        }
     }
 }
